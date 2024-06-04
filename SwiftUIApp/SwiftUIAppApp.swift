@@ -12,8 +12,9 @@ import Foundation
 struct SwiftUIAppApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
-            
+//            MoonShotView()
+//            ContentView()
+            CupcakeCornerView(order: Order())
         }
     }
 }

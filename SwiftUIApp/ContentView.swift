@@ -6,64 +6,37 @@
 //
 
 import SwiftUI
+ 
+struct DetailView: View {
+    
+    var number: Int
+    @Binding var path: NavigationPath
+    
+    var body: some View {
+         NavigationLink("Navigate to \(number + 1)", value: number + 1)
+            .navigationTitle("Number \(number)")
+            .toolbar {
+                Button("Home") {
+                    path = NavigationPath()
+                }
+            }
+    }
+}
 
 struct ContentView: View {
+     
+    @State var path = NavigationPath()
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world! 1234")
-            
-            Button(action:  {
-                ViewModel().fetchUser()
-            }, label: {
-                Text("Button")
-            })
+        NavigationStack(path: $path) {
+            DetailView(number: 0, path: $path)
+                .navigationDestination(for: Int.self) { number in
+                    DetailView(number: number, path: $path)
+                }
         }
-        .padding()
+        
     }
 }
 
 #Preview {
     ContentView()
-}
-
-
-class ViewModel {
-    
-    func fetchUser() {
-        let urlRequest = URLRequest(url: URL(string: "https://jsonplaceholder.typicode.com/todos/1")!)
-//        let urlRequest = URLRequest(url: URL(string: "https://reqres.in/api/users?page=2")!)
-    
-        let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            if let error = error {
-                print(error)
-                return
-            }
-            if let data = data {
-                
-                do {
-                    let result = try JSONDecoder().decode(UserModel.self, from: data)
-                    print("Result \(data)")
-                    print(result.completed)
-                    print(result.userId)
-                    print(result.title)
-                    print(result.id)
-                    
-                } catch let error {
-                    print("Error: \(error)")
-                }
-            }
-        }
-        
-        task.resume()
-    }
-}
-
-class UserModel: Codable {
-    var userId: Int?
-    var id: Int?
-    var title: String?
-    var completed: Bool?
 }
